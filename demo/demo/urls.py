@@ -2,6 +2,17 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView, RedirectView
 
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
+
+class FacebookLogin(SocialLoginView):
+    adapter_class = FacebookOAuth2Adapter
+    client_class = OAuth2Client
+    callback_url = 'http://127.0.0.1:1234/facebook'
+
+
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="home.html"), name='home'),
     url(r'^signup/$', TemplateView.as_view(template_name="signup.html"),
@@ -38,4 +49,5 @@ urlpatterns = [
     url(r'^account/', include('allauth.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/profile/$', RedirectView.as_view(url='/', permanent=True), name='profile-redirect'),
+    url(r'^rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login')
 ]
